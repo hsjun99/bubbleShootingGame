@@ -5,6 +5,7 @@ A0 = 0 #Board length x
 A1 = 800
 B0 = 0 #Board length y
 B1 = 800
+v=15
 
 class bubble:
     def __init__(self, c, x, y, vx, vy, fired):
@@ -26,23 +27,22 @@ class bubble:
             self.rcy = B1-100
             
     def update(self):
-        if self.x + r/2 + self.vx > A1:
+        if self.rcx + r/2 + self.vx > A1:
             self.vx = (-1) * self.vx
-            self.x = A1 - R/2
-            self.y += self.vy
-        elif self.x + r/2 + self.vx < A0:
+            self.rcx = A1 - r/2
+            self.rcy += self.vy
+        elif self.rcx + r/2 + self.vx < A0:
             self.vx = (-1) * self.vx
-            self.x = A0 + R/2
-            self.y += self.vy
+            self.rcx = A0 + r/2
+            self.rcy += self.vy
         else:
-            self.x += self.vx
-            self.y += self.vy
+            self.rcx += self.vx
+            self.rcy += self.vy
     
     def display(self):
         self.update()
         fill(255, 0, 0)
         ellipse(self.rcx, self.rcy, r, r)
-            
             
 
 class Game:
@@ -55,9 +55,18 @@ class Game:
     def display(self):
         for circle in self.bubbleList:
             circle.display()
+    
+    def click(self):
+        a = mouseX - (A1+A0)/2
+        b = mouseY - (B1-100)
+        dis = (a**2 + b**2)**0.5
+        self.bubbleList[-1].vx = v * a/dis
+        self.bubbleList[-1].vy = v * b/dis
+        self.bubbleList[-1].fired = True
+        
 
 B = Game()
-k = bubble("red", 0, 0, 0, 0, False)
+B.bubbleList.append(bubble("red", 0, 0, 0, 0, False))
 
 def setup():
     size(800, 800)
@@ -65,6 +74,7 @@ def setup():
 
 def draw():
     background(0)
-    k.display()
     B.display()
-    
+
+def mouseClicked():
+    B.click()
