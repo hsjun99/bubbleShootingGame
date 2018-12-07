@@ -1,23 +1,17 @@
 import math
 
-r = 40 #bubble size
+r = 30 #bubble size
 A0 = 0 #Board length x
 A1 = 800
 B0 = 0 #Board length y
 B1 = 800
-v=20
+v=10
 
 class bubble:
     def __init__(self, c, x, y, vx, vy, fired, filled):
         self.o=False
-        
-        self.p1 = -10
-        self.q1 = -10
         self.p2 = -10
         self.q2 = -10
-        
-        self.n1 = -10
-        self.m1= -10
         self.n2= -10
         self.m2= -10
         
@@ -35,87 +29,161 @@ class bubble:
             else:
                 self.rcx = r+self.x*r
                 self.rcy = r/2+self.y*r*(3**(0.5))/2
-        else:
+        elif filled == True:
             self.rcx = (A1+A0)/2
             self.rcy = B1-100
             
     def update(self):
-        if self.fired == False:
+        if self.fired == False and self.filled==True:
             a1, b1 = B.transtoCOD(self.p2, self.q2)
             a2, b2 = B.transtoCOD(self.n2, self.m2)
             if a1 < 20 and a1 >= 0 and b1 >=0 and b1 < 20 and a2 < 20 and a2 >= 0 and b2 >=0 and b2 < 20:
                 if B.bubbleList[b1][a1].filled==True or B.bubbleList[b2][a2].filled==True:
+                    self.rcx = (A1+A0)/2
+                    self.rcy = B1-100
                     if self.vx < 0:
-                        print("a")
-                        self.fired=True
+                       # self.fired=True
                         if B.bubbleList[b1][a1].filled==True:
+                            print("PO1")
+                            print("A")
                             xl = self.rcx-self.p2
                             yl = (self.rcy-self.q2) * (-1)
                             if yl/xl > (3**0.5)/3:
+                                print("A1")
                                 if B.bubbleList[b1][a1].y%2==0:
-                                    B.bubbleList[b1-1][a1] = bubble("red", a1, b1-1, 0, 0, True, True)
+                                    if B.bubbleList[b1-1][a1].filled == False:
+                                        fill(0, 0, 255)
+                                        ellipse(B.bubbleList[b1][a1].rcx, B.bubbleList[b1][a1].rcy, r, r)
+                                        B.bubbleList[b1-1][a1] = bubble("red", a1, b1-1, 0, 0, True, True)
+                                    else:
+                                        fill(0, 0, 255)
+                                        ellipse(B.bubbleList[b1][a1].rcx, B.bubbleList[b1][a1].rcy, r, r)
+                                        B.bubbleList[b1][a1+1] = bubble("red", a1+1, b1, 0, 0, True, True)
                                 else:
-                                    B.bubbleList[b1-1][a1+1] = bubble("red", a1+1, b1-1, 0, 0, True, True)
+                                    if B.bubbleList[b1-1][a1+1].filled == False:
+                                        print("A11")
+                                        fill(0, 0, 255)
+                                        ellipse(B.bubbleList[b1][a1].rcx, B.bubbleList[b1][a1].rcy, r, r)
+                                        B.bubbleList[b1-1][a1+1] = bubble("red", a1+1, b1-1, 0, 0, True, True)
+                                    else:
+                                        print("A12")
+                                        fill(0, 0, 255)
+                                        ellipse(B.bubbleList[b1][a1].rcx, B.bubbleList[b1][a1].rcy, r, r)
+                                        B.bubbleList[b1][a1+1] = bubble("red", a1+1, b1, 0, 0, True, True)
+                                        print(B.bubbleList[b1][a1].rcx, B.bubbleList[b1][a1].rcy)
+                                        print(B.bubbleList[b1][a1+1].filled, B.bubbleList[b1][a1+1].rcx, B.bubbleList[b1][a1+1].rcy)
                             elif yl/xl < (-1) * (3**0.5)/3:
+                                print("A2")
                                 if B.bubbleList[b1][a1].y%2==0:
-                                    B.bubbleList[b1+1][a1] = bubble("red", a1, b1+1, 0, 0, True, True)
+                                    if B.bubbleList[b1+1][a1].filled == False:
+                                        B.bubbleList[b1+1][a1] = bubble("red", a1, b1+1, 0, 0, True, True)
+                                    else:
+                                        B.bubbleList[b1][a1+1] = bubble("red", a1+1, b1, 0, 0, True, True)
                                 else:
-                                    B.bubbleList[b1+1][a1+1] = bubble("red", a1+1, b1+1, 0, 0, True, True)
+                                    if B.bubbleList[b1+1][a1+1].filled == False:
+                                        B.bubbleList[b1+1][a1+1] = bubble("red", a1+1, b1+1, 0, 0, True, True)
+                                    else:
+                                        B.bubbleList[b1][a1+1] = bubble("red", a1+1, b1, 0, 0, True, True)
                             else:
+                                print("A3")
                                 B.bubbleList[b1][a1+1] = bubble("red", a1+1, b1, 0, 0, True, True)
                                 
                         else:
+                            print("PO2")
+                            print("B")
                             xl = self.rcx-self.n2
                             yl = (self.rcy-self.m2) * (-1)
                             if yl/xl < 0:
+                                print("B1")
                                 if B.bubbleList[b2][a2].y%2==0:
+                                    print("B11")
+                                    fill(0, 0, 255)
+                                    ellipse(B.bubbleList[b2][a2].rcx, B.bubbleList[b2][a2].rcy, r, r)
                                     B.bubbleList[b2+1][a2] = bubble("red", a2, b2+1, 0, 0, True, True)
                                 else:
+                                    print("B12")
+                                    fill(0, 0, 255)
+                                    ellipse(B.bubbleList[b2][a2].rcx, B.bubbleList[b2][a2].rcy, r, r)
                                     B.bubbleList[b2+1][a2+1] = bubble("red", a2+1, b2+1, 0, 0, True, True)
                             else:
+                                print("B2")
                                 if B.bubbleList[b2][a2].y%2==0:
-                                    B.bubbleList[b2+1][a2-1] = bubble("red", a2-1, b2+1, 0, 0, True, True)
+                                    fill(0, 0, 255)
+                                    ellipse(B.bubbleList[b2][a2].rcx, B.bubbleList[b2][a2].rcy, r, r)
+                                    if B.bubbleList[b2+1][a2-1].filled == False:
+                                        B.bubbleList[b2+1][a2-1] = bubble("red", a2-1, b2+1, 0, 0, True, True)
+                                    else:
+                                        B.bubbleList[b2+1][a2] = bubble("red", a2, b2+1, 0, 0, True, True)
                                 else:
-                                    B.bubbleList[b2+1][a2] = bubble("red", a2, b2+1, 0, 0, True, True)
+                                    fill(0, 0, 255)
+                                    ellipse(B.bubbleList[b2][a2].rcx, B.bubbleList[b2][a2].rcy, r, r)
+                                    if  B.bubbleList[b2+1][a2].filled == False:
+                                        B.bubbleList[b2+1][a2] = bubble("red", a2, b2+1, 0, 0, True, True)
+                                    else:
+                                        B.bubbleList[b2+1][a2+1] = bubble("red", a2+1, b2+1, 0, 0, True, True)
                     
                     else:
-                        print("b")
                         if B.bubbleList[b2][a2].filled==True:
+                            print("PO3")
                             xl = self.rcx-self.n2
                             yl = (self.rcy-self.m2) * (-1)
                             if yl/xl > (3**0.5)/3:
+                                print("123")
                                 if B.bubbleList[b2][a2].y%2==0:
-                                    B.bubbleList[b2+1][a2-1] = bubble("red", a2-1, b2+1, 0, 0, True, True)
+                                    if B.bubbleList[b2+1][a2-1].filled == False:
+                                        B.bubbleList[b2+1][a2-1] = bubble("red", a2-1, b2+1, 0, 0, True, True)
+                                    else:
+                                         B.bubbleList[b2][a2-1] = bubble("red", a2-1, b2, 0, 0, True, True)
                                 else:
-                                    B.bubbleList[b2+1][a2] = bubble("red", a2, b2+1, 0, 0, True, True)
+                                    if B.bubbleList[b2+1][a2].filled == False:
+                                        B.bubbleList[b2+1][a2] = bubble("red", a2, b2+1, 0, 0, True, True)
+                                    else:
+                                        B.bubbleList[b2][a2-1] = bubble("red", a2-1, b2, 0, 0, True, True)
                             elif yl/xl < (-1) * (3**0.5)/3:
+                                print("456")
                                 if B.bubbleList[b2][a2].y%2==0:
-                                    B.bubbleList[b2-1][a2-1] = bubble("red", a2-1, b2-1, 0, 0, True, True)
+                                    print("456-1")
+                                    if B.bubbleList[b2-1][a2-1].filled == False:
+                                        B.bubbleList[b2-1][a2-1] = bubble("red", a2-1, b2-1, 0, 0, True, True)
+                                    else:
+                                         B.bubbleList[b2][a2-1] = bubble("red", a2-1, b2, 0, 0, True, True)
                                 else:
-                                    B.bubbleList[b2-1][a2] = bubble("red", a2, b2-1, 0, 0, True, True)
+                                    print("456-2")
+                                    if B.bubbleList[b2-1][a2].filled == False:
+                                        B.bubbleList[b2-1][a2] = bubble("red", a2, b2-1, 0, 0, True, True)
+                                    else:
+                                        B.bubbleList[b2][a2-1] = bubble("red", a2-1, b2, 0, 0, True, True)
                             else:
+                                print("PO4")
                                 B.bubbleList[b2][a2-1] = bubble("red", a2-1, b2, 0, 0, True, True)
                                 
                         else:
+                            print("8910")
                             xl = self.rcx-self.p2
                             yl = (self.rcy-self.q2) * (-1)
                             if yl/xl < 0:
                                 if B.bubbleList[b1][a1].y%2==0:
-                                    B.bubbleList[b1+1][a1] = bubble("red", a1, b1+1, 0, 0, True, True)
+                                    if B.bubbleList[b1+1][a1].filled == False:
+                                        B.bubbleList[b1+1][a1] = bubble("red", a1, b1+1, 0, 0, True, True)
+                                    else:
+                                        B.bubbleList[b1+1][a1-1] = bubble("red", a1-1, b1+1, 0, 0, True, True)
                                 else:
-                                    B.bubbleList[b1+1][a1+1] = bubble("red", a1+1, b1+1, 0, 0, True, True)
+                                    if B.bubbleList[b1+1][a1+1].filled == False:
+                                        B.bubbleList[b1+1][a1+1] = bubble("red", a1+1, b1+1, 0, 0, True, True)
+                                    else:
+                                        B.bubbleList[b1+1][a1] = bubble("red", a1, b1+1, 0, 0, True, True)
                             else:
                                 if B.bubbleList[b1][a1].y%2==0:
                                     B.bubbleList[b1+1][a1-1] = bubble("red", a1-1, b1+1, 0, 0, True, True)
                                 else:
                                     B.bubbleList[b1+1][a1] = bubble("red", a1, b1+1, 0, 0, True, True)
-                                
-                            
-                            
                     self.vx = 0
                     self.vy = 0
-                    B.bubbleList[b1][a1].o=True
-                    B.bubbleList[b2][a2].o=True
+                    self.p2 = -10
+                    self.q2 = -10
+                    self.n2= -10
+                    self.m2= -10
+                    
                     
             if self.rcx + r/2 + self.vx > A1:
                 self.vx = (-1) * self.vx
@@ -136,50 +204,40 @@ class bubble:
                 self.rcx += self.vx
                 self.rcy += self.vy
             
-                self.p1 += self.vx
-                self.q1 += self.vy
                 self.p2 += self.vx
                 self.q2 += self.vy
             
-                self.n1 += self.vx
-                self.m1 += self.vy
                 self.n2 += self.vx
                 self.m2 += self.vy
         
     
     def display(self):
         self.update()
-        if self.o == False:
+        if self.filled == True:
             fill(255, 0, 0)
-        else:
-            fill(0, 0, 255)
-        ellipse(self.rcx, self.rcy, r, r)
-        if self.fired==False:
-            stroke(0, 255, 0)
-            line(self.p1, self.q1, self.p2, self.q2)
-            line(self.n1, self.m1, self.n2, self.m2)
+            ellipse(self.rcx, self.rcy, r, r)
     
     def findAntenna(self, a, b, L, Ox, Oy):
         if a>0:
-            self.p1 = Ox - r/2*abs(b)/L
-            self.q1 = Oy - r/2*abs(a)/L
-            self.p2 = self.p1 + r*abs(a)/L
-            self.q2 = self.q1 - r*abs(b)/L
+            p1 = Ox - r/2*abs(b)/L
+            q1 = Oy - r/2*abs(a)/L
+            self.p2 = p1 + r*abs(a)/L*4/3
+            self.q2 = q1 - r*abs(b)/L*4/3
             
-            self.n1 = Ox + r/2*abs(b)/L
-            self.m1 = Oy + r/2*abs(a)/L
-            self.n2 = self.n1 + r*abs(a)/L
-            self.m2 = self.m1 - r*abs(b)/L
+            n1 = Ox + r/2*abs(b)/L
+            m1 = Oy + r/2*abs(a)/L
+            self.n2 = n1 + r*abs(a)/L*4/3
+            self.m2 = m1 - r*abs(b)/L*4/3
         else:
             self.p1 = Ox - r/2*abs(b)/L
             self.q1 = Oy + r/2*abs(a)/L
-            self.p2 = self.p1 - r*abs(a)/L
-            self.q2 = self.q1 - r*abs(b)/L
+            self.p2 = self.p1 - r*abs(a)/L*4/3
+            self.q2 = self.q1 - r*abs(b)/L*4/3
             
             self.n1 = Ox + r/2*abs(b)/L
             self.m1 = Oy - r/2*abs(a)/L
-            self.n2 = self.n1 - r*abs(a)/L
-            self.m2 = self.m1 - r*abs(b)/L
+            self.n2 = self.n1 - r*abs(a)/L*4/3
+            self.m2 = self.m1 - r*abs(b)/L*4/3
             
 
 class Game:
@@ -228,11 +286,10 @@ class Game:
         dis = (a**2 + b**2)**0.5
         u.vx = v * a/dis
         u.vy = v * b/dis
-        #self.bubbleList[-1].fired = True
         u.findAntenna(a, b, dis, (A1+A0)/2, B1-100)
 
 B = Game()
-u = bubble("red", 0, 0, 0, 0, False, False)
+u = bubble("red", 0, 0, 0, 0, False, True)
 
 def setup():
     size(800, 800)
@@ -240,11 +297,8 @@ def setup():
 
 def draw():
     background(0)
-  #  print(B.bubbleList[0][0].o)
     B.display()
-    
     u.display()
-    B.transtoCOD(510, r*(3**(0.5))/2)
 
 def mouseClicked():
     B.click()
