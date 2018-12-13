@@ -45,7 +45,7 @@ class bubble:
             B.bubbleList[b][a] = bubble(self.c, a, b, 0, 0, False, False)
             B.display()
             for k in self.cntBalls:
-                background(0)
+                background(255, 230, 250)
                 B.bubbleList[k[0]][k[1]] = bubble(random.randint(0, 5), k[1], k[0], 0, 0, False, False)
                 B.display()
         self.cntBalls = []
@@ -77,6 +77,8 @@ class bubble:
             a1, b1 = B.transtoCOD(self.p2, self.q2)
             a2, b2 = B.transtoCOD(self.n2, self.m2)
             if a1 < 20 and a1 >= 0 and b1 >=0 and b1 < 20 and a2 < 20 and a2 >= 0 and b2 >=0 and b2 < 20:
+                print(b1, a1)
+                print(b2, a2)
                 if B.bubbleList[b1][a1].filled==True or B.bubbleList[b2][a2].filled==True:
                     if self.vx < 0:
                         if B.bubbleList[b1][a1].filled==True:
@@ -227,7 +229,8 @@ class bubble:
         self.update()
         if self.filled == True:
             fill(colorList[self.c][0], colorList[self.c][1], colorList[self.c][2])
-            ellipse(self.rcx, self.rcy, r, r)
+            noStroke()
+            ellipse(self.rcx, self.rcy, r-1, r-1)
     
     def findAntenna(self, a, b, L, Ox, Oy):
         if a>0:
@@ -258,7 +261,7 @@ class Game:
         for i in range(20):
             temp = []
             for j in range(20):
-                if j>15 or i>=16:
+                if j<2 or j>15 or i>=16 or i<2:
                     temp.append(bubble(random.randint(0, 5), j, i, 0, 0, False, False))
                 else:
                     temp.append(bubble(random.randint(0, 5), j, i, 0, 0, True, True))
@@ -304,13 +307,19 @@ B = Game()
 u = bubble(random.randint(0, 5), 0, 0, 0, 0, False, True)
 
 def setup():
-    size(800, 800)
+    size(700, 750)
     background(0)
 
 def draw():
-    background(0)
+    background(255, 230, 250)
+    noFill()
+    strokeWeight(4)
+    stroke(255, 255, 255)
+    rect(2*r-1, r*(3**(0.5))/2*2-1, 700-4*r+1, 650, 10)
     B.display()
     u.display()
+    textSize(38)
+    text(str(100),700,100)
 
 def mouseClicked():
     B.click()
