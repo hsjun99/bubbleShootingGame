@@ -72,14 +72,11 @@ class bubble:
                     continue
                 self.spread(b+d[0], a+d[1], ballColor, level+1)
             
-            
     def update(self):
         if self.fired == False and self.filled==True:
             a1, b1 = B.transtoCOD(self.p2, self.q2)
             a2, b2 = B.transtoCOD(self.n2, self.m2)
             if a1 < 40 and a1 >= 0 and b1 >=0 and b1 < 25 and a2 < 40 and a2 >= 0 and b2 >=0 and b2 < 25:
-                print(b1, a1)
-                print(b2, a2)
                 if B.bubbleList[b1][a1].filled==True or B.bubbleList[b2][a2].filled==True:
                     if self.vx < 0:
                         if B.bubbleList[b1][a1].filled==True:
@@ -371,6 +368,7 @@ def draw():
     B.display()
     u.display()
     textSize(20)
+    fill(0, 102, 153);
     text(str(B.score),640,30)
 
 def mouseClicked():
