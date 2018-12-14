@@ -1,14 +1,22 @@
+add_library('minim')
 import math, random, time
+import os
+path = os.getcwd()
+player = Minim(this)
 
 r = 30 #bubble size
 A0 = 2*r #Board length x
-A1 = 700-2*r
+A1 = 525
 B0 = 0 #Board length y
 B1 = 750
-v=9
-colorList = [[255, 0, 0], [0, 255, 0], [0, 0, 255],[255, 255, 0], [0, 255, 255], [255, 0, 255]]
+v = 11
+colorList = [[255, 128, 128], [128, 230, 128], [128, 128, 255],[255, 215, 50], [64, 224, 208], [255, 128, 255]]
 dxy0 = [[-1, -1], [-1, 0], [0, 1], [1, 0], [1, -1], [0, -1]]
 dxy1 = [[-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [0, -1]]
+
+startBackground = loadImage(path + '/wallpaper.jpg')
+gameOver = loadImage(path+'/gameover.png')
+popMusic = player.loadFile(path+"/burstingSound.mp3")
 
 class bubble:
     def __init__(self, c, x, y, vx, vy, fired, filled):
@@ -38,18 +46,25 @@ class bubble:
             self.rcy = B1-100
     
     def popBubble(self, b, a):
+        global turn
         B.bubbleList[b][a] = bubble(self.c, a, b, 0, 0, True, True)
         self.cache=[]
         self.spread(b, a, self.c, 0)
         if len(self.cntBalls) >= 2:
+            popMusic.rewind()
+            popMusic.play()
             B.bubbleList[b][a] = bubble(self.c, a, b, 0, 0, False, False)
+            B.score+=100
+            background(245, 245, 245)
             B.display()
             for k in self.cntBalls:
-                background(255, 230, 250)
+                t = time.time()
+                background(245, 245, 245)
                 B.bubbleList[k[0]][k[1]] = bubble(random.randint(0, 5), k[1], k[0], 0, 0, False, False)
                 B.score+=100
                 B.display()
         self.cntBalls = []
+        turn+=1
     
     def spread(self, b, a, ballColor, level):
         self.cache.append([b, a])
@@ -212,7 +227,6 @@ class bubble:
                     self.c = random.randint(0, 5)
                     self.rcx = (A1+A0)/2
                     self.rcy = B1-100
-                    
             
             if self.rcx + r/2 + self.vx > A1:
                 self.vx = (-1) * self.vx
@@ -220,7 +234,6 @@ class bubble:
                 self.rcy += self.vy
             
                 self.findAntenna(self.vx, self.vy, v, self.rcx, self.rcy)
-            
             
             elif self.rcx - r/2 + self.vx < A0:
                 self.vx = (-1) * self.vx
@@ -251,67 +264,34 @@ class bubble:
         if a>0:
             p1 = Ox - r/2*abs(b)/L
             q1 = Oy - r/2*abs(a)/L
-            self.p2 = p1 + r*abs(a)/L*2.15/4
-            self.q2 = q1 - r*abs(b)/L*2.15/4
+            self.p2 = p1 + r*abs(a)/L*3/4
+            self.q2 = q1 - r*abs(b)/L*3/4
             
             n1 = Ox + r/2*abs(b)/L
             m1 = Oy + r/2*abs(a)/L
-            self.n2 = n1 + r*abs(a)/L*2.15/4
-            self.m2 = m1 - r*abs(b)/L*2.15/4
+            self.n2 = n1 + r*abs(a)/L*3/4
+            self.m2 = m1 - r*abs(b)/L*3/4
         else:
             self.p1 = Ox - r/2*abs(b)/L
             self.q1 = Oy + r/2*abs(a)/L
-            self.p2 = self.p1 - r*abs(a)/L*2.15/4
-            self.q2 = self.q1 - r*abs(b)/L*2.15/4
+            self.p2 = self.p1 - r*abs(a)/L*3/4
+            self.q2 = self.q1 - r*abs(b)/L*3/4
             
             self.n1 = Ox + r/2*abs(b)/L
             self.m1 = Oy - r/2*abs(a)/L
-            self.n2 = self.n1 - r*abs(a)/L*2.15/4
-            self.m2 = self.m1 - r*abs(b)/L*2.15/4
-            
+            self.n2 = self.n1 - r*abs(a)/L*3/4
+            self.m2 = self.m1 - r*abs(b)/L*3/4
 
-def formGame(stage):
-    if stage == 1:
-        k = ['         *          ',
-             '        ***         ',
-             '       *****        ',
-             '      *******       ',
-             '     *********      ',
-             '                    ']
-        
-        for i in k:
-            temp = []
-            cnt=0
-            for item in i:
-                if item == ' ':
-                    temp.append(bubble(random.randint(0, 5), cnt, i, 0, 0, False, False))
-                else:
-                    temp.append(bubble(random.randint(0, 5), cnt, i, 0, 0, True, True))
-                cnt+=1
-            self.bubbleList.append(temp)
-        for i in range(6, 25):
-            temp = []
-            for j in range(20):
-                temp.append(bubble(random.randint(0, 5), j, i, 0, 0, False, False))
-            self.bubbleList.append(temp)
-                
-    if stage==0:
-        for i in range(25):
-            temp = []
-            for j in range(25):
-                if j<2 or j>20 or i>=16 or i<2:
-                    temp.append(bubble(random.randint(0, 5), j, i, 0, 0, False, False))
-                else:
-                    temp.append(bubble(random.randint(0, 5), j, i, 0, 0, True, True))
-            self.bubbleList.append(temp)
 class Game:
     def __init__(self):
+        self.status = "Menu"
         self.score = 0
         self.bubbleList = []
-        for i in range(25):
+        self.gameEnd = False
+        for i in range(27):
             temp = []
-            for j in range(25):
-                if j<2 or j>20 or i>=16 or i<2:
+            for j in range(18):
+                if j<2 or j>16 or i>=16 or i<2:
                     temp.append(bubble(random.randint(0, 5), j, i, 0, 0, False, False))
                 else:
                     temp.append(bubble(random.randint(0, 5), j, i, 0, 0, True, True))
@@ -341,7 +321,6 @@ class Game:
         else:
             rx = rx1
             ry = int(ry)
-        
         return int(rx), ry
     
     def click(self):
@@ -351,25 +330,86 @@ class Game:
         u.vx = v * a/dis
         u.vy = v * b/dis
         u.findAntenna(a, b, dis, (A1+A0)/2, B1-100)
+    
+    def addlines(self):
+        for i in range(23, 1, -1):
+            for j in range(25):
+                if not (j<2 or j>16):
+                    if self.bubbleList[i][j].filled == False:
+                        continue
+                    if i==20:
+                        check = True
+                    self.bubbleList[i+2][j] = bubble(self.bubbleList[i][j].c, j, i+2, 0, 0, True, True)
+        for i in range(2, 4):
+            temp = []
+            for j in range(18):
+                if j<2 or j>16 or i>=16 or i<2:
+                    self.bubbleList[i][j] = bubble(random.randint(0, 5), j, i, 0, 0, False, False)
+                else:
+                    self.bubbleList[i][j] = bubble(random.randint(0, 5), j, i, 0, 0, True, True)
 
 B = Game()
 u = bubble(random.randint(0, 5), 0, 0, 0, 0, False, True)
 
+turn = 0
+Started = False
+
 def setup():
-    size(700, 750)
+    size(575, 750)
     background(0)
 
 def draw():
-    background(255, 230, 250)
-    noFill()
-    strokeWeight(4)
-    stroke(255, 255, 255)
-    rect(2*r-1, r*(3**(0.5))/2*2-1, 700-4*r+2, 650, 10)
-    B.display()
-    u.display()
-    textSize(20)
-    fill(0, 102, 153);
-    text(str(B.score),640,30)
-
+    global turn, B
+    if B.gameEnd == True:
+        background(245, 245, 245)
+        noFill()
+        strokeWeight(4)
+        stroke(255, 255, 255)
+        rect(2*r-1, r*(3**(0.5))/2*2-1, 700-8*r+5, 650, 10)
+        strokeWeight(2)
+        stroke(200, 0, 0)
+        line(2*r, r+r*(3**(0.5))/2*22, 700-6*r, r+r*(3**(0.5))/2*22)
+        B.display()
+        image(gameOver, (575-388)/2, 100)
+    elif B.status == "Play":
+        background(245, 245, 245)
+        noFill()
+        strokeWeight(4)
+        stroke(255, 255, 255)
+        rect(2*r-1, r*(3**(0.5))/2*2-1, 700-8*r+5, 650, 10)
+        strokeWeight(2)
+        stroke(200, 0, 0)
+        line(2*r, r+r*(3**(0.5))/2*22, 700-6*r, r+r*(3**(0.5))/2*22)
+        B.display()
+        u.display()
+        textSize(20)
+        fill(0, 102, 153);
+        text(str(B.score),470,30)
+        if turn >= 8:
+            B.addlines()
+            turn = 0
+        for j in range(3, 16):
+            if B.bubbleList[23][j].filled == True:
+                B.gameEnd = True
+        
+    elif B.status == "Menu":
+        image(startBackground, 0, -300, 575, 840*575/450)
+        textSize(24)
+        if 575//2.5-30 < mouseX < 575//2.5 + 160 and 750//3 < mouseY < 750//3+50:
+            fill(255,0,0)
+        else:
+            fill(255)
+        text("Play Game", 575//2.5+8, 750//3+40)
+        textSize(24)
+        if 575//2.5-30 < mouseX < 575//2.5 + 160 and 750//2-60 < mouseY < 750//2-10:
+            fill(255,0,0)
+        else:
+            fill(255)
+        text("Instruction", 575//2.5+8, 750//2-20)
+        
 def mouseClicked():
-    B.click()
+    if B.status == "Play":
+        B.click()
+    elif B.status == "Menu":
+        if 575//2.5-30 < mouseX < 575//2.5 + 160 and 750//3 < mouseY < 750//3+50:
+            B.status = "Play"
