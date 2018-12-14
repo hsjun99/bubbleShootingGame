@@ -1,11 +1,11 @@
 import math, random, time
 
 r = 30 #bubble size
-A0 = 0 #Board length x
-A1 = 800
+A0 = 2*r #Board length x
+A1 = 700-2*r
 B0 = 0 #Board length y
-B1 = 800
-v=8
+B1 = 750
+v=9
 colorList = [[255, 0, 0], [0, 255, 0], [0, 0, 255],[255, 255, 0], [0, 255, 255], [255, 0, 255]]
 dxy0 = [[-1, -1], [-1, 0], [0, 1], [1, 0], [1, -1], [0, -1]]
 dxy1 = [[-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [0, -1]]
@@ -47,6 +47,7 @@ class bubble:
             for k in self.cntBalls:
                 background(255, 230, 250)
                 B.bubbleList[k[0]][k[1]] = bubble(random.randint(0, 5), k[1], k[0], 0, 0, False, False)
+                B.score+=100
                 B.display()
         self.cntBalls = []
     
@@ -76,7 +77,7 @@ class bubble:
         if self.fired == False and self.filled==True:
             a1, b1 = B.transtoCOD(self.p2, self.q2)
             a2, b2 = B.transtoCOD(self.n2, self.m2)
-            if a1 < 20 and a1 >= 0 and b1 >=0 and b1 < 20 and a2 < 20 and a2 >= 0 and b2 >=0 and b2 < 20:
+            if a1 < 40 and a1 >= 0 and b1 >=0 and b1 < 25 and a2 < 40 and a2 >= 0 and b2 >=0 and b2 < 25:
                 print(b1, a1)
                 print(b2, a2)
                 if B.bubbleList[b1][a1].filled==True or B.bubbleList[b2][a2].filled==True:
@@ -197,8 +198,25 @@ class bubble:
                     self.c = random.randint(0, 5)
                     self.rcx = (A1+A0)/2
                     self.rcy = B1-100
+                  
+                elif b1==2 or b2==2:
+                    if self.vx>0:
+                        a1, b1 = B.transtoCOD(self.p2, self.q2)
+                        B.bubbleList[2][a1] = bubble(self.c, a1, 2, 0, 0, True, True)
+                    else:
+                        a2, b2 = B.transtoCOD(self.n2, self.m2)
+                        B.bubbleList[2][a2] = bubble(self.c, a2, 2, 0, 0, True, True)
+                    self.vx = 0
+                    self.vy = 0
+                    self.p2 = -10
+                    self.q2 = -10
+                    self.n2= -10
+                    self.m2= -10
+                    self.c = random.randint(0, 5)
+                    self.rcx = (A1+A0)/2
+                    self.rcy = B1-100
                     
-                    
+            
             if self.rcx + r/2 + self.vx > A1:
                 self.vx = (-1) * self.vx
                 self.rcx = A1 - r/2
@@ -255,17 +273,51 @@ class bubble:
             self.m2 = self.m1 - r*abs(b)/L*2.15/4
             
 
-class Game:
-    def __init__(self):
-        self.bubbleList = []
-        for i in range(20):
+def formGame(stage):
+    if stage == 1:
+        k = ['         *          ',
+             '        ***         ',
+             '       *****        ',
+             '      *******       ',
+             '     *********      ',
+             '                    ']
+        
+        for i in k:
+            temp = []
+            cnt=0
+            for item in i:
+                if item == ' ':
+                    temp.append(bubble(random.randint(0, 5), cnt, i, 0, 0, False, False))
+                else:
+                    temp.append(bubble(random.randint(0, 5), cnt, i, 0, 0, True, True))
+                cnt+=1
+            self.bubbleList.append(temp)
+        for i in range(6, 25):
             temp = []
             for j in range(20):
-                if j<2 or j>15 or i>=16 or i<2:
+                temp.append(bubble(random.randint(0, 5), j, i, 0, 0, False, False))
+            self.bubbleList.append(temp)
+                
+    if stage==0:
+        for i in range(25):
+            temp = []
+            for j in range(25):
+                if j<2 or j>20 or i>=16 or i<2:
                     temp.append(bubble(random.randint(0, 5), j, i, 0, 0, False, False))
                 else:
                     temp.append(bubble(random.randint(0, 5), j, i, 0, 0, True, True))
-                
+            self.bubbleList.append(temp)
+class Game:
+    def __init__(self):
+        self.score = 0
+        self.bubbleList = []
+        for i in range(25):
+            temp = []
+            for j in range(25):
+                if j<2 or j>20 or i>=16 or i<2:
+                    temp.append(bubble(random.randint(0, 5), j, i, 0, 0, False, False))
+                else:
+                    temp.append(bubble(random.randint(0, 5), j, i, 0, 0, True, True))
             self.bubbleList.append(temp)
     
     def display(self):
@@ -315,11 +367,11 @@ def draw():
     noFill()
     strokeWeight(4)
     stroke(255, 255, 255)
-    rect(2*r-1, r*(3**(0.5))/2*2-1, 700-4*r+1, 650, 10)
+    rect(2*r-1, r*(3**(0.5))/2*2-1, 700-4*r+2, 650, 10)
     B.display()
     u.display()
-    textSize(38)
-    text(str(100),700,100)
+    textSize(20)
+    text(str(B.score),640,30)
 
 def mouseClicked():
     B.click()
